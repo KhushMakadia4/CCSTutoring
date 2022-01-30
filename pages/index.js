@@ -1,9 +1,9 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
-import Meta from '../components/Meta'
-import Navbar from '../components/Navbar'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import Meta from "../components/Meta";
+import Navbar from "../components/Navbar";
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
   return (
@@ -68,13 +68,12 @@ export default function Home() {
     //     </a>
     //   </footer>
     // </div>
-    <div className="accent-lime-200 ">
-    <Meta/>
-    <Navbar></Navbar>
-    <Link href="/resources">
-      <a className='text-3xl font-bold underline'>help</a>
-    </Link>
+    <div className="bg-gray-300 h-screen">
+      <Meta />
+      <Link href="/resources">
+        <a className="text-3xl font-bold underline">help</a>
+      </Link>
     </div>
-  // )
-  )
+    // )
+  );
 }

@@ -8,7 +8,7 @@ const Meta = ({title, keywords, description}) => {
             <meta name='keywords' content={keywords}/>
             <meta name='description' content={description}/>
             <meta charset='utf-8'/>
-            <link rel='icon' href='/favicon,ico'/>
+            <link rel='shortcut icon' href='/chslogo.png' type="image/x-icon"/>
             <title>{title}</title>
         </Head>
     )
