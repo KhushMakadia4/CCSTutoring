@@ -2,19 +2,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaBars } from "react-icons/fa";
 import styled from "styled-components";
-import {Fragment} from 'react'
+import {Fragment, useState} from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 
 export default function Navbar() {
 
   const navigation = [
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-    { name: 'Reports', href: '#', current: false },
+    { name: 'Dashboard', href: '/', current: false },
+    { name: 'Team', href: '/resources', current: false },
+    { name: 'Projects', href: '/projects', current: false },
+    { name: 'Calendar', href: '/calendar', current: false },
+    { name: 'Reports', href: '/reports', current: false },
   ]
+
+  const [nav, setNav] = useState([['Dashboard', '/', false], ['Team','/resources',false], ['Projects','/projects',false], ['Calendar','/calendar',false], ['Reports','/reports',false]]) //name, href, current
   const classNames = (...classes) =>  {
     return classes.filter(Boolean).join(' ')
   }
@@ -27,29 +29,46 @@ export default function Navbar() {
               <div className="max-w-7xl  px-4 md:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                   <div className="flex items-center">
-                    <div className="flex-shrink-0">
+                    <Link href="/">
+                    <div className="flex-shrink-0" onClick={()=>{
+                      nav.forEach(element => {
+                        element[2] = false
+                        setNav()
+                      });
+                    }}>
                       <img
                         className="h-8 w-8"
                         src="/chslogo.png"
                         alt="Workflow"
                       />
                     </div>
+                    </Link>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
-                        {navigation.map((item) => (
-                          <a
-                            key={item.name}
-                            href={item.href}
-                            className={classNames(
-                              item.current
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                              'px-3 py-2 rounded-md text-sm font-medium'
-                            )}
-                            aria-current={item.current ? 'page' : undefined}
+                        {nav.map((item) => (
+                          <Link href={item[1]} key={item[0]}>
+                          <div
+                            onClick={()=> {
+                              // alert(item.name)
+                             nav.forEach(element => {
+                               element[2] = false
+                             });
+                              item[2] = true
+                              // alert(item.current)
+                            }}
+                            // className={classNames(
+                            //   item.current
+                            //     ? 'bg-gray-900 text-white'
+                            //     : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                            //   'px-3 py-2 rounded-md text-sm font-medium cursor-pointer'
+                            // )}
+                            className={item[2] ? "bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer" : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer"}
+                            // aria-current={item.current ? 'page' : undefined}
+                            
                           >
-                            {item.name}
-                          </a>
+                            {item[0]}
+                          </div>
+                          </Link>
                         ))}
                       </div>
                     </div>
