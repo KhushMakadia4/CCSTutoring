@@ -7,7 +7,7 @@ const Meta = ({title, keywords, description}) => {
             <meta name='viewport' content='width=device-width,initial-scale=1'/>
             <meta name='keywords' content={keywords}/>
             <meta name='description' content={description}/>
-            <meta charset='utf-8'/>
+            <meta charSet='utf-8'/>
             <link rel='shortcut icon' href='/chslogo.png' type="image/x-icon"/>
             <title>{title}</title>
         </Head>
