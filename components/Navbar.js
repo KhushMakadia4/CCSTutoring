@@ -11,11 +11,18 @@ export default function Navbar() {
   const [nav, setNav] = useState([['Dashboard', '/', false], ['Quick Questions','/quickqs',false], ['Tutor Questions','/tutorqs',false], ['Resources','/resources',false],]) //name, href, current
 
   const {query} = useRouter();
+
+  const [pathname, setPath] = useState("")
   
-  useEffect(() => {
-    alert(location.href.split('/').slice(-1))
-    switch(location.href.split('/').slice(-1)) {
+  useEffect(async () => {
+    setPath(location.href.split('/').slice(-1))
+    console.log(pathname.toString())
+    nav.forEach((element) => {
+      element[2] = false;
+    });
+    switch(pathname.toString()) {
       case '':
+        alert("1")
         nav[0][2] = true
         break
       case 'quickqs':
@@ -25,6 +32,7 @@ export default function Navbar() {
         nav[2][2] = true
         break
       case 'resources':
+        alert("2")
         nav[3][2] = true
         break
     }
@@ -77,7 +85,7 @@ export default function Navbar() {
                             item[2] = true;
                           }}
                           className={
-                            (item[2] || window.location.href.split('/').slice(-1)==item[1])
+                            (item[2])
                               ? "bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                               : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                           }
@@ -119,8 +127,8 @@ export default function Navbar() {
                 // >
                 //   {item.name}
                 // </Disclosure.Button>
-                <Disclosure.Button>
-                  <Link href={item[1]} key={item[0]}>
+                <Disclosure.Button key={item[0]} as="a">
+                  <Link href={item[1]} >
                     <div
                       onClick={() => {
                         nav.forEach((element) => {
@@ -129,7 +137,7 @@ export default function Navbar() {
                         item[2] = true;
                       }}
                       className={classNames(
-                        (item[2] || window.location.href.split('/').slice(-1)==item[1]) ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                        (item[2]) ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                             'block px-3 py-2 rounded-md text-base font-medium'
                           )}
                     >
