@@ -10,19 +10,15 @@ import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 export default function Navbar() {
   const [nav, setNav] = useState([['Dashboard', '/', false], ['Quick Questions','/quickqs',false], ['Tutor Questions','/tutorqs',false], ['Resources','/resources',false],]) //name, href, current
 
-  const {query} = useRouter();
 
-  const [pathname, setPath] = useState("")
   
   useEffect(async () => {
-    setPath(location.href.split('/').slice(-1))
-    console.log(pathname.toString())
-    nav.forEach((element) => {
+    console.log(location.href.split('/').slice(-1).toString())
+    await nav.forEach((element) => {
       element[2] = false;
     });
-    switch(pathname.toString()) {
+    switch(location.href.split('/').slice(-1).toString()) {
       case '':
-        alert("1")
         nav[0][2] = true
         break
       case 'quickqs':
@@ -32,7 +28,6 @@ export default function Navbar() {
         nav[2][2] = true
         break
       case 'resources':
-        alert("2")
         nav[3][2] = true
         break
     }
