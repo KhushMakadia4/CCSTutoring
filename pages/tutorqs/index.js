@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="accent-lime-200 ">
       <Meta title="Our Resources" />
-      <h1>HI WELCOME TO RESOURCES</h1>
+      <h1>HI WELCOME TO Tutor questions</h1>
     </div>
     // )
   );

@@ -1,49 +1,56 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 import { FaBars } from "react-icons/fa";
 import styled from "styled-components";
-import {Fragment, useEffect, useState} from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+import { Fragment, useEffect, useState } from "react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+
+import { firestore } from "../utils/Firebase";
 
 export default function Navbar() {
-  const [nav, setNav] = useState([['Dashboard', '/', false], ['Quick Questions','/quickqs',false], ['Tutor Questions','/tutorqs',false], ['Resources','/resources',false],]) //name, href, current
+  const { asPath } = useRouter(); //keep asPath as asPath don't change the name next js routing is complicated
 
+  const [nav, setNav] = useState([
+    ["Dashboard", "/", false],
+    ["Quick Questions", "/quickqs", false],
+    ["Tutor Questions", "/tutorqs", false],
+    ["Resources", "/resources", false],
+  ]); //name, href, current
 
-  
   useEffect(async () => {
-    console.log(location.href.split('/').slice(-1).toString())
+    console.log(asPath.toString().split("/").slice(0)[1]);
+    const path = asPath.toString().split("/").slice(0)[1];
+    // console.log(location.href.split("/").slice(2).toString());
     await nav.forEach((element) => {
       element[2] = false;
     });
-    switch(location.href.split('/').slice(-1).toString()) {
-      case '':
-        nav[0][2] = true
-        break
-      case 'quickqs':
-        nav[1][2] = true
-        break
-      case 'tutorqs':
-        nav[2][2] = true
-        break
-      case 'resources':
-        nav[3][2] = true
-        break
+    switch (path) {
+      case "":
+        nav[0][2] = true;
+        break;
+      case "quickqs":
+        nav[1][2] = true;
+        break;
+      case "tutorqs":
+        nav[2][2] = true;
+        break;
+      case "resources":
+        nav[3][2] = true;
+        break;
     }
-    
   }, []);
-  
 
   const navigation = [
-    { name: 'Dashboard', href: '/', current: false },
-    { name: 'Quick-Qs', href: '/quickqs', current: false },
-    { name: 'Tutor-Qs', href: '/tutorqs', current: false },
-    { name: 'Resources', href: '/resources', current: false },
-  ]
-  const classNames = (...classes) =>  {
-    return classes.filter(Boolean).join(' ')
-  }
+    { name: "Dashboard", href: "/", current: false },
+    { name: "Quick-Qs", href: "/quickqs", current: false },
+    { name: "Tutor-Qs", href: "/tutorqs", current: false },
+    { name: "Resources", href: "/resources", current: false },
+  ];
+  const classNames = (...classes) => {
+    return classes.filter(Boolean).join(" ");
+  };
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -80,7 +87,7 @@ export default function Navbar() {
                             item[2] = true;
                           }}
                           className={
-                            (item[2])
+                            item[2]
                               ? "bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                               : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                           }
@@ -123,7 +130,7 @@ export default function Navbar() {
                 //   {item.name}
                 // </Disclosure.Button>
                 <Disclosure.Button key={item[0]} as="a">
-                  <Link href={item[1]} >
+                  <Link href={item[1]}>
                     <div
                       onClick={() => {
                         nav.forEach((element) => {
@@ -132,9 +139,11 @@ export default function Navbar() {
                         item[2] = true;
                       }}
                       className={classNames(
-                        (item[2]) ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                            'block px-3 py-2 rounded-md text-base font-medium'
-                          )}
+                        item[2]
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "block px-3 py-2 rounded-md text-base font-medium"
+                      )}
                     >
                       {item[0]}
                     </div>
