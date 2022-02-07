@@ -5,7 +5,7 @@ const Resource = () => {
   const { resourceid } = router.query;
   //   alert(id);
 
-  return <p>Post: {resourceid}</p>;
+  return <p className="h-fit">Post: {resourceid}</p>;
 };
 
 export default Resource;
