@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-const TutorQ = () => {
+export default function TutorQ() {
   const router = useRouter();
   const { tutorqid } = router.query;
   //   alert(id);
@@ -8,4 +8,3 @@ const TutorQ = () => {
   return <p>TutorQ: {tutorqid}</p>;
 };
 
-export default TutorQ;

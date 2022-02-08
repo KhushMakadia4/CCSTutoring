@@ -1,5 +1,5 @@
 import { getApp } from "firebase/app";
-import { getFirestore, serverTimestamp, Timestamp } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, getFirestore, query, serverTimestamp, Timestamp, where } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
@@ -23,7 +23,13 @@ const now = Timestamp.now();
 const app = getApp();
 console.log(app.name ? "DATABASE ACTIVATED" : "Database not working");
 const auth = getAuth();
-const firestore = getFirestore();
+const db = getFirestore();
 const storage = getStorage();
+// const doc = doc();
+// const getDoc = getDoc();
+// const getDocs = getDocs()
+// const collection = collection();
+// const query = query();
+// const where = where();
 
-export { firestore, now, auth, storage };
+export { db, now, auth, storage, };

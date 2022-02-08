@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-const Resource = () => {
+export default function Resource() {
   const router = useRouter();
   const { resourceid } = router.query;
   //   alert(id);
@@ -8,4 +8,4 @@ const Resource = () => {
   return <p className="h-fit">Post: {resourceid}</p>;
 };
 
-export default Resource;
+// export default Resource;
