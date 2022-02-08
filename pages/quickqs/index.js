@@ -1,6 +1,6 @@
 import Meta from "../../components/Meta";
 
-export default function Home() {
+export default function QuickQs() {
   return (
     <div className="accent-lime-200 ">
       <Meta title="Our Resources" />

@@ -18,11 +18,10 @@ const firebaseapp = initializeApp({
 // if (!firebase.apps.length()) {
 //   alert("hisdfoisd");
 // }
-
 const now = Timestamp.now();
 // console.log(now);
 const app = getApp();
-console.log(app.name ? "FIREBASE ACTIVATED" : "Firebase not working");
+console.log(app.name ? "DATABASE ACTIVATED" : "Database not working");
 const auth = getAuth();
 const firestore = getFirestore();
 const storage = getStorage();
