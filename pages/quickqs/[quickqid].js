@@ -7,10 +7,10 @@ import { db } from "../../utils/Firebase";
 export default function QuickQ({ qdata }) {
   const router = useRouter();
   const { quickqid } = router.query;
-  //   alert(id);
-
   return (
     <div className="flex flex-col">
+      {(qdata===undefined) ? <h1>No page for {process.env.NEXT_PUBLIC_HOST.substring(0,process.env.NEXT_PUBLIC_HOST.length-2) + process.env.NEXT_PUBLIC_HOSTNAME + ":" + process.env.NEXT_PUBLIC_PORT +"/quickid/"+quickqid}</h1> : 
+      <>
       <div className="flex-1 h-52 w-52">
         <Image
           src={qdata.image}
@@ -23,43 +23,42 @@ export default function QuickQ({ qdata }) {
       <h3>{qdata.description}</h3>
       <h4>{qdata.createdBy}</h4>
       <h5>resolved: {qdata.resolved}</h5>
+      </>
+  }
     </div>
+    
   );
 }
 
-export async function getStaticPaths() {
-  const snapshot = await getDocs(collection(db, "quickqs"));
-  let paths = [];
-  snapshot.forEach((question) => {
-    // console.log(question);
-    paths.push({ params: { quickqid: question.id.toString() } });
-  });
-  console.log(paths);
-  return {
-    paths,
-    fallback: true,
-  };
-}
-
 export async function getStaticProps({ params }) {
-  console.log("params", params.quickqid);
-  let fallb = { title: "This page does not exist" };
   const qsnap = await getDoc(doc(db, "quickqs", params.quickqid.toString()));
   if (qsnap.exists()) {
     const qdata = qsnap.data();
     const usersnap = await getDoc(doc(db, "users", qdata.createdBy.toString()));
     qdata.createdBy =
       usersnap.data().firstName + " " + usersnap.data().lastName;
-    console.log("qsnap data", qdata);
     return {
       props: { qdata },
       revalidate: 10,
     };
   } else {
-    console.log("qsnap data", "does not exist");
+    const fallb = { title: "" };
     return {
       props: { fallb },
       revalidate: 10,
     };
   }
+}
+
+export async function getStaticPaths() {
+  const snapshot = await getDocs(collection(db, "quickqs"));
+  let paths = [];
+  snapshot.forEach((question) => {
+    paths.push({ params: { quickqid: question.id.toString() } });
+  });
+  console.log("paths",paths);
+  return {
+    paths,
+    fallback: true,
+  };
 }
