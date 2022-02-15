@@ -1,23 +1,57 @@
 import { useRouter } from "next/router";
+import { db } from "../../utils/Firebase";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function Resource() {
+export default function Resource({ rdata }) {
   const router = useRouter();
   const { resourceid } = router.query;
   //   alert(id);
 
-  return <p className="h-fit">Post: {resourceid}</p>;
-};
-
+  return (
+    <div className="flex flex-col">
+      {rdata === undefined ? (
+        <h1>
+          No page for{" "}
+          {process.env.NEXT_PUBLIC_HOST.substring(
+            0,
+            process.env.NEXT_PUBLIC_HOST.length - 2
+          ) +
+            process.env.NEXT_PUBLIC_HOSTNAME +
+            ":" +
+            process.env.NEXT_PUBLIC_PORT +
+            "/resources/" +
+            resourceid}
+        </h1>
+      ) : (
+        <>
+          <div className="flex-1 h-52 w-52">
+            <Image
+              src={rdata.image}
+              height="10%"
+              width="10%"
+              layout="responsive"
+            ></Image>
+          </div>
+          <h1>{rdata.title}</h1>
+          <h3>{rdata.type}</h3>
+          <Link href="https://google.com">Link</Link>
+          <h5>{rdata.description}</h5>
+        </>
+      )}
+    </div>
+  );
+}
 
 export async function getStaticProps({ params }) {
-  const qsnap = await getDoc(doc(db, "resources", params.quickqid.toString()));
-  if (qsnap.exists()) {
-    const qdata = qsnap.data();
-    const usersnap = await getDoc(doc(db, "users", qdata.createdBy.toString()));
-    qdata.createdBy =
-      usersnap.data().firstName + " " + usersnap.data().lastName;
+  const rsnap = await getDoc(
+    doc(db, "resources", params.resourceid.toString())
+  );
+  if (rsnap.exists()) {
+    const rdata = rsnap.data();
     return {
-      props: { qdata },
+      props: { rdata },
       revalidate: 10,
     };
   } else {
@@ -30,12 +64,13 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-  const snapshot = await getDocs(collection(db, "quickqs"));
+  const snapshot = await getDocs(collection(db, "resources"));
   let paths = [];
   snapshot.forEach((question) => {
-    paths.push({ params: { quickqid: question.id.toString() } });
+    // console.log(question.data());
+    paths.push({ params: { resourceid: question.id.toString() } });
   });
-  console.log("paths",paths);
+  console.log("resources", paths);
   return {
     paths,
     fallback: true,

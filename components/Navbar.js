@@ -20,7 +20,7 @@ export default function Navbar() {
   ]); //name, href, current
 
   useEffect(async () => {
-    console.log(asPath.toString().split("/").slice(0)[1]);
+    // console.log(asPath.toString().split("/").slice(0)[1]);
     const path = asPath.toString().split("/").slice(0)[1];
     // console.log(location.href.split("/").slice(2).toString());
     await nav.forEach((element) => {
@@ -60,7 +60,7 @@ export default function Navbar() {
               <div className="flex items-center">
                 <Link href="/">
                   <div
-                    className="flex-shrink-0"
+                    className="h-16 w-20 mb-3"
                     onClick={() => {
                       nav.forEach((element) => {
                         element[2] = false;
@@ -68,11 +68,7 @@ export default function Navbar() {
                       nav[0][2] = true;
                     }}
                   >
-                    <img
-                      className="h-8 w-8"
-                      src="/chslogo.png"
-                      alt="Workflow"
-                    />
+                    <Image height="100%" width="100%" src="/chslogo.png" />
                   </div>
                 </Link>
                 <div className="hidden md:block">

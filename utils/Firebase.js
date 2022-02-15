@@ -1,5 +1,15 @@
 import { getApp } from "firebase/app";
-import { collection, doc, getDoc, getDocs, getFirestore, query, serverTimestamp, Timestamp, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  serverTimestamp,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
@@ -32,4 +42,4 @@ const storage = getStorage();
 // const query = query();
 // const where = where();
 
-export { db, now, auth, storage, };
+export { db, now, auth, storage };
