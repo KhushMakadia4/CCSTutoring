@@ -5,9 +5,16 @@ import Meta from "../../components/Meta";
 import { db } from "../../utils/Firebase";
 
 export default function QuickQs({ quicksnap }) {
+
+  const logger = () => {
+    // alert(quicksnap[0])
+    console.log("LSDKJFLSDKJF");
+    console.log("quicksnap", quicksnap);
+  }
   return (
     <div className="accent-lime-200 ">
       <Meta title="Our Resources" />
+      <div className="bg-red-500" onClick={logger}><br></br></div>
       {quicksnap.map((question, i) => (
         <div key={question.id}>
           <h1>Question {i + 1}</h1>
@@ -31,46 +38,91 @@ export default function QuickQs({ quicksnap }) {
     // )
   );
 }
-
-async function refineData(tempQ) {
-  const tempQdata = tempQ.data();
-  const usersnap = await getDoc(doc(db, "users", tempQ.createdBy.toString()));
-
-  console.log("usersnap", usersnap.data());
-  tempQdata.createdBy =
-    usersnap.data().firstName + " " + usersnap.data().lastName;
-  return tempQdata;
-}
-
 //TODO: This bullshit
 //Hola
 //!FUCK THIS SHIT
 
-export async function getStaticProps() {
+// async function getQDocData(question) {
+//   const qdata = question.data();
+//     console.log("qdata", qdata);
+//     const usersnap = await getDoc(
+//       doc(db, "users", question.data().createdBy.toString())
+//     );
+
+//     console.log("usersnap", usersnap.data());
+//     qdata.createdBy =
+//       usersnap.data().firstName + " " + usersnap.data().lastName;
+
+
+//     return {id: question.id.toString(), data: qdata};
+// }
+
+
+// export async function getServerSideProps() {
+//   const quicksnap = [];
+//   const snapshot = await getDocs(collection(db, "quickqs"))
+//   snapshot.forEach(async (question) => {
+//     // const qdata = question.data();
+//     // console.log("qdata", qdata);
+//     // const usersnap = await getDoc(
+//     //   doc(db, "users", question.data().createdBy.toString())
+//     // );
+
+//     // console.log("usersnap", usersnap.data());
+//     // qdata.createdBy =
+//     //   usersnap.data().firstName + " " + usersnap.data().lastName;
+
+//     // console.log("6 qdata", qdata);
+//     // quicksnap.push({ id: question.id.toString(), data: qdata });
+
+//     // console.log("quicksnap", quicksnap[0].data.title);
+//     quicksnap.push(getQDocData(question))
+//   });
+//   console.log("quisckqs index js", quicksnap);
+//   return {
+//     props: { quicksnap },
+//     // revalidate: 10,
+//   };
+// }
+
+export async function getServerSideProps() {
   const quicksnap = [];
-  console.log(1);
   const snapshot = await getDocs(collection(db, "quickqs"));
-  console.log(2);
-  snapshot.forEach(async (question) => {
-    console.log(3);
-    const qdata = question.data();
-    console.log("qdata", qdata);
-    const usersnap = await getDoc(
-      doc(db, "users", question.data().createdBy.toString())
-    );
+  console.log("snapshot empty: ", snapshot.empty);
+  console.log("snapshot size: ", snapshot.size);
+  console.log("snapshot meta: ", snapshot.metadata);
+  // var i=0
+  // while(i<snapshot.size) {
+  if (snapshot.size > 0) {
+    // Promise.all(
+    snapshot.forEach(async (question) => {
+      const qdata = question.data();
 
-    console.log("usersnap", usersnap.data());
-    qdata.createdBy =
-      usersnap.data().firstName + " " + usersnap.data().lastName;
+      const usersnap = await getDoc(
+        doc(db, "users", question.data().createdBy.toString())
+      );
 
-    console.log(6);
-    quicksnap.push({ id: question.id.toString(), data: qdata });
+      qdata.createdBy =
+        usersnap.data().firstName + " " + usersnap.data().lastName;
 
-    console.log(7);
-  });
-  console.log("quisckqs index js", quicksnap);
-  return {
-    props: { quicksnap },
-    revalidate: 10,
-  };
+      const qfull = qdata;
+      qfull.id = question.id.toString();
+
+      console.log("qfull", qfull);
+      quicksnap.push(qfull);
+    });
+    //   i++
+    // }
+    console.log("quicksnap", quicksnap);
+    return {
+      props: { quicksnap },
+      // revalidate: 10,
+    };
+    
+  } else {
+    quicksnap.push("no data");
+    return {
+      props: { quicksnap },
+    };
+  }
 }
