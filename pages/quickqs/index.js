@@ -3,8 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 import Meta from "../../components/Meta";
 import { db } from "../../utils/Firebase";
+import { useEffect } from "react";
 
 export default function QuickQs({ quicksnap }) {
+  useEffect(() => {
+    console.log("useeffect quicksnap", quicksnap);
+  }, []);
   return (
     <div className="accent-lime-200 ">
       <Meta title="Our Resources" />
@@ -32,16 +36,6 @@ export default function QuickQs({ quicksnap }) {
   );
 }
 
-async function refineData(tempQ) {
-  const tempQdata = tempQ.data();
-  const usersnap = await getDoc(doc(db, "users", tempQ.createdBy.toString()));
-
-  console.log("usersnap", usersnap.data());
-  tempQdata.createdBy =
-    usersnap.data().firstName + " " + usersnap.data().lastName;
-  return tempQdata;
-}
-
 //TODO: This bullshit
 //Hola
 //!FUCK THIS SHIT
@@ -63,10 +57,10 @@ export async function getStaticProps() {
     qdata.createdBy =
       usersnap.data().firstName + " " + usersnap.data().lastName;
 
-    console.log(6);
+    console.log("6 qdata", qdata);
     quicksnap.push({ id: question.id.toString(), data: qdata });
 
-    console.log(7);
+    console.log("quicksnap", quicksnap[0].data.createdBy);
   });
   console.log("quisckqs index js", quicksnap);
   return {
