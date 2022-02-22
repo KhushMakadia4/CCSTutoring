@@ -57,8 +57,11 @@ export async function getStaticProps({ params }) {
   } else {
     const fallb = { title: "" };
     return {
-      props: { fallb },
-      revalidate: 10,
+      redirect: {
+        destination: "/tutorqs",
+        permanent: false,
+        // statusCode: 301
+      },
     };
   }
 }

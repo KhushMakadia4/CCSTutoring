@@ -34,9 +34,11 @@ export default function QuickQ({ qdata }) {
           <h1>{qdata.title}</h1>
           <h3>{qdata.description}</h3>
           <h4>{qdata.createdBy}</h4>
-          <h5>resolved: {qdata.resolved}</h5>
+          <h5>resolved: {qdata.resolved.toString()}</h5>
         </>
       )}
+      //! display comments
+      
     </div>
   );
 }
@@ -55,8 +57,11 @@ export async function getStaticProps({ params }) {
   } else {
     const fallb = { title: "" };
     return {
-      props: { fallb },
-      revalidate: 10,
+      redirect: {
+        destination: "/quickqs",
+        permanent: false,
+        // statusCode: 301
+      },
     };
   }
 }
