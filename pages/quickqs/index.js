@@ -95,6 +95,7 @@ export async function getServerSideProps() {
   // while(i<snapshot.size) {
   if (snapshot.size > 0) {
     // Promise.all(
+    var ssize = snapshot.size
     snapshot.forEach(async (question) => {
       const qdata = question.data();
 
