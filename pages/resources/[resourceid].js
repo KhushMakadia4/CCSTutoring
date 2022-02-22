@@ -57,8 +57,11 @@ export async function getStaticProps({ params }) {
   } else {
     const fallb = { title: "" };
     return {
-      props: { fallb },
-      revalidate: 10,
+      redirect: {
+        destination: "/resources",
+        permanent: false,
+        // statusCode: 301
+      },
     };
   }
 }
