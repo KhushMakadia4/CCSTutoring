@@ -7,6 +7,7 @@ export default function TutorQ({ tdata }) {
   const router = useRouter();
   const { tutorqid } = router.query;
   //   alert(id);
+  
 
   return (
     <div className="flex flex-col">
@@ -36,7 +37,13 @@ export default function TutorQ({ tdata }) {
           <h1>{tdata.title}</h1>
           <h3>{tdata.description}</h3>
           <h4>{tdata.createdBy}</h4>
-          <h5>resolved: {tdata.resolved}</h5>
+          <h5>resolved: {tdata.resolved.toString()}</h5>
+          <section id="app">
+    <div className="max-w-2xl flex my-7 bg-white rounded-lg">
+      <textarea type="text" class="input" placeholder="Write a comment"></textarea>
+      <button className="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white"> Add comment</button>
+    </div>
+  </section>
         </>
       )}
     </div>

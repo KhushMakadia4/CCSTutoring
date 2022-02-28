@@ -35,10 +35,28 @@ export default function QuickQ({ qdata }) {
           <h3>{qdata.description}</h3>
           <h4>{qdata.createdBy}</h4>
           <h5>resolved: {qdata.resolved.toString()}</h5>
+          {qdata.resolved.toString()==="false" ? (
+            <section id="app">
+              <div className="max-w-2xl flex my-7 bg-white rounded-lg">
+                <textarea
+                  type="text"
+                  class="input"
+                  placeholder="Write a comment"
+                ></textarea>
+                <button className="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white">
+                  Add comment
+                </button>
+              </div>
+            </section>
+          ) : (
+            <></>
+          )}
+          {/* {qdata.comments.map({
+
+          })} */}
         </>
       )}
-      //! display comments
-      
+      {/* display comments */}
     </div>
   );
 }
@@ -47,9 +65,18 @@ export async function getStaticProps({ params }) {
   const qsnap = await getDoc(doc(db, "quickqs", params.quickqid.toString()));
   if (qsnap.exists()) {
     const qdata = qsnap.data();
-    const usersnap = await getDoc(doc(db, "users", qdata.createdBy.toString()));
-    qdata.createdBy =
-      usersnap.data().firstName + " " + usersnap.data().lastName;
+    // const usersnap = await getDoc(doc(db, "users", qdata.createdBy.toString()));
+    // qdata.createdBy =
+    //   usersnap.data().firstName + " " + usersnap.data().lastName;
+    qdata.comments = []
+    const commentSnap = await getDocs(collection(db, "quickqs/"+params.quickqid.toString()+"/comments")).then((comSnap) =>{
+      if (comSnap.size>0) {
+        comSnap.docs.forEach((comment) => {
+          qdata.comments.push(comment.data())
+        })
+      }
+    })
+    console.log(qdata);
     return {
       props: { qdata },
       revalidate: 10,
