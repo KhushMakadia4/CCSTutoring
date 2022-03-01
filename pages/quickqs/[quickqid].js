@@ -38,11 +38,10 @@ export default function QuickQ({ qdata }) {
           {qdata.resolved.toString()==="false" ? (
             <section id="app">
               <div className="max-w-2xl flex my-7 bg-white rounded-lg">
-                <textarea
+                <input
                   type="text"
-                  class="input"
                   placeholder="Write a comment"
-                ></textarea>
+                ></input>
                 <button className="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white">
                   Add comment
                 </button>
@@ -51,12 +50,14 @@ export default function QuickQ({ qdata }) {
           ) : (
             <></>
           )}
-          {/* {qdata.comments.map({
-
-          })} */}
+          {qdata.comments.map((comment, i)=> (
+            <div>
+              <h3>{comment.writtenBy}: {comment.text}</h3>
+              <div className="h-20 border-t-8 border-black border-double ml-48 mr-48" />
+            </div>
+          ))}
         </>
       )}
-      {/* display comments */}
     </div>
   );
 }
@@ -69,7 +70,7 @@ export async function getStaticProps({ params }) {
     // qdata.createdBy =
     //   usersnap.data().firstName + " " + usersnap.data().lastName;
     qdata.comments = []
-    const commentSnap = await getDocs(collection(db, "quickqs/"+params.quickqid.toString()+"/comments")).then((comSnap) =>{
+    await getDocs(collection(db, "quickqs/"+params.quickqid.toString()+"/comments")).then((comSnap) =>{
       if (comSnap.size>0) {
         comSnap.docs.forEach((comment) => {
           qdata.comments.push(comment.data())
