@@ -1,4 +1,11 @@
-import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { db } from "../../utils/Firebase";
@@ -7,7 +14,6 @@ export default function TutorQ({ tdata }) {
   const router = useRouter();
   const { tutorqid } = router.query;
   //   alert(id);
-  
 
   return (
     <div className="flex flex-col">
@@ -38,20 +44,45 @@ export default function TutorQ({ tdata }) {
           <h3>{tdata.description}</h3>
           <h4>{tdata.createdBy}</h4>
           <h5>resolved: {tdata.resolved.toString()}</h5>
-          {tdata.resolved.toString()==="false" ? (
+          {tdata.resolved.toString() === "false" ? (
             <section id="app">
               <div className="max-w-2xl flex my-7 bg-white rounded-lg">
                 <input
-                  id = "commentTBox"
+                  id="commentTBox"
                   type="text"
                   placeholder="Write a comment"
                 ></input>
-                <button onClick={async ()=>{
-                  await addDoc(collection(db, "quickqs/"+params.quickqid.toString()+"/comments"), {
-                    writtenBy: "Khushjeet Makadamian", //! change later to signed in user name
-                    text: document.getElementById("commentTBox").value.toString()
-                  })
-                }} className="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white">
+                <button
+                  onClick={async () => {
+                    await addDoc(
+                      collection(
+                        db,
+                        "tutorqs/" + tutorqid.toString() + "/comments"
+                      ),
+                      {
+                        writtenBy: "Khushjeet Makadamian", //! change later to signed in user name
+                        text: document
+                          .getElementById("commentTBox")
+                          .value.toString(),
+                      }
+                    ).then(async () => {
+                      tdata.comments = [];
+                      await getDocs(
+                        collection(
+                          db,
+                          "tutorqs/" + tutorqid.toString() + "/comments"
+                        )
+                      ).then((comSnap) => {
+                        if (comSnap.size > 0) {
+                          comSnap.docs.forEach((comment) => {
+                            tdata.comments.push(comment.data());
+                          });
+                        }
+                      });
+                    });
+                  }}
+                  className="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white"
+                >
                   Add comment
                 </button>
               </div>
@@ -59,9 +90,11 @@ export default function TutorQ({ tdata }) {
           ) : (
             <></>
           )}
-          {tdata.comments.map((comment, i)=> (
+          {tdata.comments.map((comment, i) => (
             <div>
-              <h3>{comment.writtenBy}: {comment.text}</h3>
+              <h3>
+                {comment.writtenBy}: {comment.text}
+              </h3>
               <div className="h-20 border-t-8 border-black border-double ml-48 mr-48" />
             </div>
           ))}
@@ -75,18 +108,20 @@ export async function getStaticProps({ params }) {
   const tsnap = await getDoc(doc(db, "tutorqs", params.tutorqid.toString()));
   if (tsnap.exists()) {
     const tdata = tsnap.data();
-    tdata.id = params.tutorqid.toString()
+    tdata.id = params.tutorqid.toString();
     // const usersnap = await getDoc(doc(db, "users", tdata.createdBy.toString()));
     // tdata.createdBy =
     //   usersnap.data().firstName + " " + usersnap.data().lastName;
-    tdata.comments = []
-    await getDocs(collection(db, "quickqs/"+params.quickqid.toString()+"/comments")).then((comSnap) =>{
-      if (comSnap.size>0) {
+    tdata.comments = [];
+    await getDocs(
+      collection(db, "tutorqs/" + params.tutorqid.toString() + "/comments")
+    ).then((comSnap) => {
+      if (comSnap.size > 0) {
         comSnap.docs.forEach((comment) => {
-          tdata.comments.push(comment.data())
-        })
+          tdata.comments.push(comment.data());
+        });
       }
-    })
+    });
     return {
       props: { tdata },
       revalidate: 10,
