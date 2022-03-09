@@ -1,4 +1,5 @@
-import { addDoc, collection, doc, getDoc, getDocs, onSnapshot } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
+import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -71,6 +72,7 @@ export default function QuickQ({ qdata }) {
                         text: document
                           .getElementById("commentTBox")
                           .value.toString(),
+                        timestamp: serverTimestamp()
                       }
                     ).then(async () => {
                       setComments(comments=>[ {writtenBy: "Khushjeet Makadamian", text: document
@@ -127,10 +129,16 @@ export async function getStaticProps({ params }) {
     // qdata.createdBy =
     //   usersnap.data().firstName + " " + usersnap.data().lastName;
     qdata.comments = []
-    await getDocs(collection(db, "quickqs/"+params.quickqid.toString()+"/comments")).then((comSnap) =>{
+    const qtemp = query(collection(db, "quickqs/"+params.quickqid.toString()+"/comments"), orderBy("timestamp", "desc"))
+    await getDocs(qtemp).then((comSnap) =>{
       if (comSnap.size>0) {
         comSnap.docs.forEach((comment) => {
-          qdata.comments.push(comment.data())
+          const commTemp = {
+            text: comment.data().text,
+            writtenBy: comment.data().writtenBy,
+            //?dont really need timestamp here but can add here
+          }
+          qdata.comments.push(commTemp)
         })
       }
     })
