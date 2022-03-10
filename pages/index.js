@@ -70,8 +70,8 @@ export default function Home() {
     // </div>
     <div className="bg-gray-300 h-screen">
       <Meta />
-      <Link href="/resources">
-        <a className="text-3xl font-bold underline">help</a>
+      <Link href="/create">
+        <a className="text-3xl font-bold underline">create</a>
       </Link>
     </div>
     // )

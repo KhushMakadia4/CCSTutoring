@@ -1,5 +1,4 @@
-import { FirebaseError } from "firebase/app";
-import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -76,27 +75,11 @@ export default function QuickQ({ qdata }) {
                       }
                     ).then(async () => {
                       setComments(comments=>[ {writtenBy: "Khushjeet Makadamian", text: document
-                      .getElementById("commentTBox") //? Add server timestamp to code and arrange code by that!
+                      .getElementById("commentTBox") 
                       .value.toString()}, ...comments])//!Change later to signed in user name
 
-                      // console.log("doc added qdata: ", qdata);
-                      // console.log("doc added qdata: ", qdata);
-                      // qdata.comments = [];
-                      // console.log("qdata comments cleared qdata: ", qdata)
-                      // console.log("qdata comments cleared qdata: ", qdata);
-                      // await getDocs(
-                      //   collection(
-                      //     db,
-                      //     "quickqs/" + quickqid.toString() + "/comments"
-                      //   )
-                      // ).then((comSnap) => {
-                      //   if (comSnap.size > 0) {
-                      //     comSnap.docs.forEach((comment) => {
-                      //       qdata.comments.push(comment.data());
-                      //     });
-                      //   }
-                      // });
-                      // console.log("comments refilled qdata: ", qdata);
+
+                      document.getElementById("commentTBox").value = ""
                     });
                   }}
                   className="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white">

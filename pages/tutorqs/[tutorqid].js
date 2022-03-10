@@ -1,19 +1,28 @@
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-} from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { db } from "../../utils/Firebase";
+
+
 
 export default function TutorQ({ tdata }) {
   const router = useRouter();
   const { tutorqid } = router.query;
   //   alert(id);
+
+  const [comments, setComments] = useState([])
+
+
+  useEffect(()=>{
+    // onSnapshot()
+    const tempComm = []
+    tdata.comments.forEach((comment)=>{
+      tempComm.push(comment)
+    })
+    setComments(tempComm)
+    // console.log("useEffect", comments[1])
+  }, [])
 
   return (
     <div className="flex flex-col">
@@ -54,6 +63,32 @@ export default function TutorQ({ tdata }) {
                 ></input>
                 <button
                   onClick={async () => {
+                    // await addDoc(
+                    //   collection(
+                    //     db,
+                    //     "tutorqs/" + tutorqid.toString() + "/comments"
+                    //   ),
+                    //   {
+                    //     writtenBy: "Khushjeet Makadamian", //! change later to signed in user name
+                    //     text: document
+                    //       .getElementById("commentTBox")
+                    //       .value.toString(),
+                    //   }
+                    // ).then(async () => {
+                    //   tdata.comments = [];
+                    //   await getDocs(
+                    //     collection(
+                    //       db,
+                    //       "tutorqs/" + tutorqid.toString() + "/comments"
+                    //     )
+                    //   ).then((comSnap) => {
+                    //     if (comSnap.size > 0) {
+                    //       comSnap.docs.forEach((comment) => {
+                    //         tdata.comments.push(comment.data());
+                    //       });
+                    //     }
+                    //   });
+                    // });
                     await addDoc(
                       collection(
                         db,
@@ -64,21 +99,15 @@ export default function TutorQ({ tdata }) {
                         text: document
                           .getElementById("commentTBox")
                           .value.toString(),
+                        timestamp: serverTimestamp()
                       }
                     ).then(async () => {
-                      tdata.comments = [];
-                      await getDocs(
-                        collection(
-                          db,
-                          "tutorqs/" + tutorqid.toString() + "/comments"
-                        )
-                      ).then((comSnap) => {
-                        if (comSnap.size > 0) {
-                          comSnap.docs.forEach((comment) => {
-                            tdata.comments.push(comment.data());
-                          });
-                        }
-                      });
+                      setComments(comments=>[ {writtenBy: "Khushjeet Makadamian", text: document
+                      .getElementById("commentTBox") 
+                      .value.toString()}, ...comments])//!Change later to signed in user name
+
+
+                      document.getElementById("commentTBox").value = ""
                     });
                   }}
                   className="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white"
@@ -90,7 +119,7 @@ export default function TutorQ({ tdata }) {
           ) : (
             <></>
           )}
-          {tdata.comments.map((comment, i) => (
+          {comments.map((comment, i) => (
             <div>
               <h3>
                 {comment.writtenBy}: {comment.text}
@@ -113,15 +142,28 @@ export async function getStaticProps({ params }) {
     // tdata.createdBy =
     //   usersnap.data().firstName + " " + usersnap.data().lastName;
     tdata.comments = [];
-    await getDocs(
-      collection(db, "tutorqs/" + params.tutorqid.toString() + "/comments")
-    ).then((comSnap) => {
-      if (comSnap.size > 0) {
+    // await getDocs(
+    //   collection(db, "tutorqs/" + params.tutorqid.toString() + "/comments")
+    // ).then((comSnap) => {
+    //   if (comSnap.size > 0) {
+    //     comSnap.docs.forEach((comment) => {
+    //       tdata.comments.push(comment.data());
+    //     });
+    //   }
+    // });
+    const ttemp = query(collection(db, "tutorqs/"+params.tutorqid.toString()+"/comments"), orderBy("timestamp", "desc"))
+    await getDocs(ttemp).then((comSnap) =>{
+      if (comSnap.size>0) {
         comSnap.docs.forEach((comment) => {
-          tdata.comments.push(comment.data());
-        });
+          const commTemp = {
+            text: comment.data().text,
+            writtenBy: comment.data().writtenBy,
+            //?dont really need timestamp here but can add here
+          }
+          tdata.comments.push(commTemp)
+        })
       }
-    });
+    })
     return {
       props: { tdata },
       revalidate: 10,
