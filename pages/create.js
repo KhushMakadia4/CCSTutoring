@@ -4,6 +4,7 @@ import { ChevronDownIcon, LoginIcon } from "@heroicons/react/solid";
 import { useState } from "react";
 import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
+import { getDroppedOrSelectedFiles } from "html5-file-selector";
 
 export default function Create() {
   const [postType, setPostType] = useState("Post Type");
@@ -14,30 +15,11 @@ export default function Create() {
     return classes.filter(Boolean).join(" ");
   }
 
-  const fileSelectedHandler = (e) => {
-    if (e.target.files.length !== 0 && e.target.files.length <= 3) {
-      setImages([]);
-      let efiles = [e.target.files];
-      efiles.forEach(async (eimg) => {
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          setImages([...images, reader.result.toString()]);
-        };
-        await reader.readAsDataURL(new Blob(eimg, { type: eimg.type }));
-      });
-      console.log(images);
-    } else if (e.target.files.length > 3) {
-      alert(
-        "You have selected too many files! You are only allowed to select a maximum of 3"
-      );
-    }
-  };
-
   const getUploadParams = () => {
     return { url: "https://httpbin.org/post" };
   };
 
-  const handleChangeStatus = ({ meta }, status) => {
+  const handleChangeStatus = ({ meta, remove }, status) => {
     console.log("change status", status, meta);
   };
 
@@ -45,7 +27,7 @@ export default function Create() {
     if (allFiles.length > 3) {
       alert("You have selected way too many files");
     } else {
-      console.log(files.map((f) => f.meta));
+      console.log(files.map((f) => f));
       allFiles.forEach((f) => f.remove());
     }
   };
@@ -88,7 +70,7 @@ export default function Create() {
                     onClick={() => {
                       setPostType("Quick Question");
                       setImgNumAllow(1);
-                      // const newFiles = [...files]
+                      // document.getElementById("imgDropzone").remove();
                     }}
                   >
                     Quick Question
@@ -140,45 +122,25 @@ export default function Create() {
         {postType === "Tutor Question" ? "3 " : "1 "})
       </h1>
       {/*  */}
-      {postType === "Tutor Question" ? (
-        <Dropzone
-          getUploadParams={getUploadParams}
-          onChangeStatus={handleChangeStatus}
-          onSubmit={handleSubmit}
-          accept="image/png"
-          maxFiles={3}
-          inputContent={(files, extra) =>
-            extra.reject || files.length > 3
-              ? "3 PNG Images only"
-              : "Drag Images or Click to Browse"
-          }
-          styles={{
-            dropzone: { minHeight: 200, maxHeight: 250 },
-            dropzoneReject: { borderColor: "red", backgroundColor: "#DAA" },
-            inputLabel: (files, extra) =>
-              extra.reject || files.length > 3 ? { color: "red" } : {},
-          }}
-        />
-      ) : (
-        <Dropzone
-          getUploadParams={getUploadParams}
-          onChangeStatus={handleChangeStatus}
-          onSubmit={handleSubmit}
-          accept="image/png"
-          maxFiles={1}
-          inputContent={(files, extra) =>
-            extra.reject || files.length > 1
-              ? "1 PNG Image only"
-              : "Drag Images or Click to Browse"
-          }
-          styles={{
-            dropzone: { minHeight: 200, maxHeight: 250 },
-            dropzoneReject: { borderColor: "red", backgroundColor: "#DAA" },
-            inputLabel: (files, extra) =>
-              extra.reject || files.length > 1 ? { color: "red" } : {},
-          }}
-        />
-      )}
+      <Dropzone
+        id="imgDropzone"
+        getUploadParams={getUploadParams}
+        onChangeStatus={handleChangeStatus}
+        onSubmit={handleSubmit}
+        accept="image/png"
+        maxFiles={imgNumAllow}
+        inputContent={(files, extra) =>
+          extra.reject || files.length > imgNumAllow
+            ? imgNumAllow + " PNG Images only"
+            : "Drag Images or Click to Browse"
+        }
+        styles={{
+          dropzone: { minHeight: 200, maxHeight: 250 },
+          dropzoneReject: { borderColor: "red", backgroundColor: "#DAA" },
+          inputLabel: (files, extra) =>
+            extra.reject || files.length > imgNumAllow ? { color: "red" } : {},
+        }}
+      />
     </div>
   );
 }
