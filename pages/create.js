@@ -5,6 +5,7 @@ import { useState } from "react";
 import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
+import {Button} from "react-bootstrap"
 
 export default function Create() {
   const [postType, setPostType] = useState("Post Type");
@@ -141,6 +142,9 @@ export default function Create() {
             extra.reject || files.length > imgNumAllow ? { color: "red" } : {},
         }}
       />
+      <br></br>
+      <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create Post</button>
+
     </div>
   );
 }
