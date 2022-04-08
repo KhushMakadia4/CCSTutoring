@@ -28,10 +28,28 @@ export default function Create() {
     if (allFiles.length > 3) {
       alert("You have selected way too many files");
     } else {
-      console.log(files.map((f) => f));
-      allFiles.forEach((f) => f.remove());
+      // console.log("files", files)
+      // console.log("allFiles", allFiles);
+      // setImages(files)
+      // console.log("images", images[0]);
+      // console.log(files.map((f) => f));
+      let tempArr = []
+      allFiles.forEach(f => {
+        tempArr.push(f.file)
+      })
+      setImages(tempArr)
+      images.forEach((f) => console.log(f));
     }
   };
+
+
+  const checkFieldsSatisfied = () => {
+    return postType && document.getElementById("titlePost") && document.getElementById("descPost")
+  }
+
+  const handleUpload = () => {
+
+  }
 
   return (
     <div>
@@ -102,7 +120,7 @@ export default function Create() {
       <br></br>
       <div className="mb-3 pt-0">
         <input
-          id="dayNum"
+          id="titlePost"
           type="text"
           placeholder="Title"
           className="px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border-0 shadow outline-none focus:outline-none focus:ring w-full"
@@ -110,7 +128,7 @@ export default function Create() {
       </div>
       <div className="mb-3 pt-0">
         <input
-          id="dayName"
+          id="descPost"
           type="text"
           placeholder="Description"
           className="px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border-0 shadow outline-none focus:outline-none focus:ring w-full"
@@ -143,7 +161,7 @@ export default function Create() {
         }}
       />
       <br></br>
-      <button onClick={handleUpload} type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create Post</button>
+      <button onClick={handleUpload} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create Post</button>
 
     </div>
   );
