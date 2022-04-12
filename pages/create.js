@@ -6,6 +6,8 @@ import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
 import {Button} from "react-bootstrap"
+import { storage } from "../utils/Firebase";
+import { ref, uploadBytes } from "firebase/storage";
 
 export default function Create() {
   const [postType, setPostType] = useState("Post Type");
@@ -44,11 +46,28 @@ export default function Create() {
 
 
   const checkFieldsSatisfied = () => {
-    return postType && document.getElementById("titlePost") && document.getElementById("descPost")
+    return postType !== "Post Type" && document.getElementById("titlePost").value !=="" && document.getElementById("descPost").value !== ""
   }
 
   const handleUpload = () => {
-
+    if (checkFieldsSatisfied) {
+    switch(postType) {
+      case "Quick Question":
+        const storageRef = ref(storage, "images/"+"kmakadia4@gmail.com/" + images[0].name)//! replace second parameter with user
+        uploadBytes(storageRef, images[0]).then((snapshot)=>{
+          console.log("File uploaded", snapshot);
+        })
+        break
+      case "Tutor Question":
+        images.map(im=>{
+          // uploadBytes
+          const storageRef = ref(storage, "images/"+"kmakadia4@gmail.com/" + im.name)//! replace second parameter with user
+          uploadBytes(storageRef, im).then((snapshot) =>{
+            console.log("File uploaded");
+          })
+        })  
+    }
+    }
   }
 
   return (
