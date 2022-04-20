@@ -7,7 +7,8 @@ import Dropzone from "react-dropzone-uploader";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
 import {Button} from "react-bootstrap"
 import { storage } from "../utils/Firebase";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { serverTimestamp, Timestamp } from "firebase/firestore";
 
 export default function Create() {
   const [postType, setPostType] = useState("Post Type");
@@ -49,19 +50,38 @@ export default function Create() {
     return postType !== "Post Type" && document.getElementById("titlePost").value !=="" && document.getElementById("descPost").value !== ""
   }
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (checkFieldsSatisfied) {
-    switch(postType) {
-      case "Quick Question":
-        const storageRef = ref(storage, "images/"+"kmakadia4@gmail.com/" + images[0].name)//! replace second parameter with user
-        uploadBytes(storageRef, images[0]).then((snapshot)=>{
+    switch (postType) {
+       case "Quick Question":
+        console.log(Timestamp.now().seconds+""+Timestamp.now().nanoseconds);
+        const storageRef = ref(storage, "images/"+"kmakadia4@gmail.com/" + Timestamp.now().seconds+""+Timestamp.now().nanoseconds)//! replace second parameter with user email
+        const title = document.getElementById("titlePost").value
+        const description = document.getElementById("descPost").value
+        let urlPostIm = "";
+        await uploadBytes(storageRef, images[0]).then(async (snapshot)=>{
           console.log("File uploaded", snapshot);
+          await getDownloadURL(storageRef).then(url => {
+              urlPostIm = url
+          })
         })
+
+        const postObj = {
+          "title": title,
+          "description": description,
+          "image": urlPostIm,
+          "resolved": false,
+          "createdBy": "kmakadia4@gmail.com"
+        }
+        console.log(postObj);
+
+        
         break
       case "Tutor Question":
-        images.map(im=>{
+        images.map((im,i)=>{
           // uploadBytes
-          const storageRef = ref(storage, "images/"+"kmakadia4@gmail.com/" + im.name)//! replace second parameter with user
+          console.log(Timestamp.now().seconds+""+Timestamp.now().nanoseconds);
+          const storageRef = ref(storage, "images/"+"kmakadia4@gmail.com/" + Timestamp.now().seconds+""+Timestamp.now().nanoseconds+""+i)
           uploadBytes(storageRef, im).then((snapshot) =>{
             console.log("File uploaded");
           })
