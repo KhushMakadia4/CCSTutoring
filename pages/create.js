@@ -6,9 +6,9 @@ import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
 import {Button} from "react-bootstrap"
-import { storage } from "../utils/Firebase";
+import { db, storage } from "../utils/Firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { serverTimestamp, Timestamp } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp, Timestamp } from "firebase/firestore";
 
 export default function Create() {
   const [postType, setPostType] = useState("Post Type");
@@ -75,17 +75,41 @@ export default function Create() {
         }
         console.log(postObj);
 
+        const docRef = await addDoc(collection(db, "quickqs"), postObj)
+        console.log("DOCID: ", docRef.id);
         
         break
       case "Tutor Question":
+
+        const Ttitle = document.getElementById("titlePost").value
+        const Tdescription = document.getElementById("descPost").value
+        let TurlPostIm = [];
         images.map((im,i)=>{
           // uploadBytes
           console.log(Timestamp.now().seconds+""+Timestamp.now().nanoseconds);
           const storageRef = ref(storage, "images/"+"kmakadia4@gmail.com/" + Timestamp.now().seconds+""+Timestamp.now().nanoseconds+""+i)
-          uploadBytes(storageRef, im).then((snapshot) =>{
+          uploadBytes(storageRef, im).then(async (snapshot) =>{
             console.log("File uploaded");
+            await getDownloadURL(storageRef).then(url => {
+              TurlPostIm.push(url)
           })
-        })  
+          })
+        })
+        console.log("URL List", TurlPostIm);
+
+
+        const TpostObj = {
+          "title": Ttitle,
+          "description": Tdescription,
+          "image": TurlPostIm,
+          "resolved": false,
+          "createdBy": "kmakadia4@gmail.com"
+        }
+        console.log(postObj);
+
+        const TdocRef = await addDoc(collection(db, "quickqs"), TpostObj)
+        console.log("DOCID: ", TdocRef.id);
+        break
     }
     }
   }
