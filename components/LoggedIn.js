@@ -1,6 +1,6 @@
 import { authUser, loading } from "../utils/hooks/useFirebaseAuth";
-import { useAuth } from "../utils/providers/AuthUserProvider";
-import {useRouter} from 'next/router'
+import { useAuth } from "../utils/providers/AuthUserContext";
+import {useRouter} from 'next/router';
 import { useEffect } from "react";
 
 
@@ -14,6 +14,9 @@ const LoggedIn = ({children}) => {
     useEffect(() => {
       if (!loading && !authUser)
         router.push('/login')
+        console.log(authUser);
+        console.log(loading);
+        // console.log("NOT LOGGED IN");
     }, [authUser, loading])
   
     return (
