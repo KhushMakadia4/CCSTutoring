@@ -84,36 +84,31 @@ export default function Create() {
         const Ttitle = document.getElementById("titlePost").value
         const Tdescription = document.getElementById("descPost").value
         let TurlPostIm = [];
-        const imageupl = images.map(async (im,i)=>{
+        images.map((im,i)=>{
           // uploadBytes
           console.log(Timestamp.now().seconds+""+Timestamp.now().nanoseconds);
           const storageRef = ref(storage, "images/"+"kmakadia4@gmail.com/" + Timestamp.now().seconds+""+Timestamp.now().nanoseconds+""+i)
-          await uploadBytes(storageRef, im).then(async (snapshot) =>{
+          uploadBytes(storageRef, im).then(async (snapshot) =>{
             console.log("File uploaded");
             await getDownloadURL(storageRef).then(url => {
               TurlPostIm.push(url)
           })
-
-          
           })
         })
+        console.log("URL List", TurlPostIm);
 
-        Promise.all(imageupl).then(async ()=>{
 
-          console.log("URL List", TurlPostIm);
+        const TpostObj = {
+          "title": Ttitle,
+          "description": Tdescription,
+          "image": TurlPostIm,
+          "resolved": false,
+          "createdBy": "kmakadia4@gmail.com"
+        }
+        console.log(postObj);
 
-          const TpostObj = {
-            "title": Ttitle,
-            "description": Tdescription,
-            "image": TurlPostIm,
-            "resolved": false,
-            "createdBy": "kmakadia4@gmail.com"
-          }
-          console.log(postObj);
-  
-          const TdocRef = await addDoc(collection(db, "tutorqs"), TpostObj)
-          console.log("DOCID: ", TdocRef.id);
-        })
+        const TdocRef = await addDoc(collection(db, "quickqs"), TpostObj)
+        console.log("DOCID: ", TdocRef.id);
         break
     }
     }
