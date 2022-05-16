@@ -1,9 +1,7 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import LoggedIn from "./LoggedIn";
 import { useEffect } from "react";
-import { useAuth } from "../utils/providers/AuthUserContext";
-import {useRouter} from "next/router"
+import { useRouter } from "next/router";
 
 export default function Layout({ children }) {
 
@@ -22,11 +20,9 @@ export default function Layout({ children }) {
 
   return (
     <>
-    {/* <LoggedIn> */}
       <Navbar />
       <main>{children}</main>
       <Footer />
-      {/* </LoggedIn> */}
     </>
   );
 }

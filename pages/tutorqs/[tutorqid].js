@@ -1,28 +1,38 @@
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+} from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Meta from "../../components/Meta";
+import { useAuth } from "../../context/AuthContext";
 import { db } from "../../utils/Firebase";
-
-
 
 export default function TutorQ({ tdata }) {
   const router = useRouter();
   const { tutorqid } = router.query;
+  const { user } = useAuth();
   //   alert(id);
 
-  const [comments, setComments] = useState([])
+  const [comments, setComments] = useState([]);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     // onSnapshot()
-    const tempComm = []
-    tdata.comments.forEach((comment)=>{
-      tempComm.push(comment)
-    })
-    setComments(tempComm)
+    const tempComm = [];
+    tdata.comments.forEach((comment) => {
+      tempComm.push(comment);
+    });
+    setComments(tempComm);
+    // console.log("image effect", tdata.image);
     // console.log("useEffect", comments[1])
-  }, [])
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -41,19 +51,38 @@ export default function TutorQ({ tdata }) {
         </h1>
       ) : (
         <>
-          <div className="flex-1 h-52 w-52">
-            <Image
-              src={tdata.image}
-              height="10%"
-              width="10%"
-              layout="responsive"
-            ></Image>
+          <Meta title={tdata.title} />
+          <div className="flex-wrap h-152 w-52">
+            {Array.isArray(tdata.image) ? (
+              tdata.image.map((img, i) => (
+                <>
+                  <Image
+                    key={img + i}
+                    priority={true}
+                    src={img}
+                    height="10%"
+                    width="10%"
+                    layout="responsive"
+                  ></Image>
+                  <div className="h-20 border-t-8 border-black  border-double ml-48 mr-48" />
+                </>
+              ))
+            ) : (
+              <Image
+                key={tdata.image}
+                priority={true}
+                src={tdata.image}
+                height="10%"
+                width="10%"
+                layout="responsive"
+              ></Image>
+            )}
           </div>
           <h1>{tdata.title}</h1>
           <h3>{tdata.description}</h3>
           <h4>{tdata.createdBy}</h4>
           <h5>resolved: {tdata.resolved.toString()}</h5>
-          {tdata.resolved.toString() === "false" ? (
+          {tdata.resolved.toString() === "false" && user.tutor ? (
             <section id="app">
               <div className="max-w-2xl flex my-7 bg-white rounded-lg">
                 <input
@@ -95,19 +124,26 @@ export default function TutorQ({ tdata }) {
                         "tutorqs/" + tutorqid.toString() + "/comments"
                       ),
                       {
-                        writtenBy: "Khushjeet Makadamian", //! change later to signed in user name
+                        // writtenBy: "Khushjeet Makadamian", //! change later to signed in user name
+                        writtenBy: user.fullName,
                         text: document
                           .getElementById("commentTBox")
                           .value.toString(),
-                        timestamp: serverTimestamp()
+                        timestamp: serverTimestamp(),
                       }
                     ).then(async () => {
-                      setComments(comments=>[ {writtenBy: "Khushjeet Makadamian", text: document
-                      .getElementById("commentTBox") 
-                      .value.toString()}, ...comments])//!Change later to signed in user name
+                      setComments((comments) => [
+                        {
+                          // writtenBy: "Khushjeet Makadamian",
+                          writtenBy: user.fullName,
+                          text: document
+                            .getElementById("commentTBox")
+                            .value.toString(),
+                        },
+                        ...comments,
+                      ]); //!Change later to signed in user name
 
-
-                      document.getElementById("commentTBox").value = ""
+                      document.getElementById("commentTBox").value = "";
                     });
                   }}
                   className="rounded bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white"
@@ -119,6 +155,8 @@ export default function TutorQ({ tdata }) {
           ) : (
             <></>
           )}
+          <br></br>
+          <h1>Comments</h1>
           {comments.map((comment, i) => (
             <div>
               <h3>
@@ -151,19 +189,24 @@ export async function getStaticProps({ params }) {
     //     });
     //   }
     // });
-    const ttemp = query(collection(db, "tutorqs/"+params.tutorqid.toString()+"/comments"), orderBy("timestamp", "desc"))
-    await getDocs(ttemp).then((comSnap) =>{
-      if (comSnap.size>0) {
+    const ttemp = query(
+      collection(db, "tutorqs/" + params.tutorqid.toString() + "/comments"),
+      orderBy("timestamp", "desc")
+    );
+    await getDocs(ttemp).then((comSnap) => {
+      if (comSnap.size > 0) {
         comSnap.docs.forEach((comment) => {
           const commTemp = {
             text: comment.data().text,
             writtenBy: comment.data().writtenBy,
             //?dont really need timestamp here but can add here
-          }
-          tdata.comments.push(commTemp)
-        })
+          };
+          tdata.comments.push(commTemp);
+        });
       }
-    })
+    });
+    console.log("tdata server", tdata);
+    console.log("tdata image", tdata.image);
     return {
       props: { tdata },
       revalidate: 10,
