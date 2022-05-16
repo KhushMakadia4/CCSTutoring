@@ -21,6 +21,7 @@ export default function QuickQs({ quicksnap }) {
           <h1>Question {i + 1}</h1>
           <div className="flex-1 h-52 w-52">
             <Image
+              key={question.image + i}
               priority={true}
               src={question.image}
               height="10%"

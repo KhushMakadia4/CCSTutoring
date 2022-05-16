@@ -10,6 +10,9 @@ export default function TutorQs({ tutorsnap }) {
     // alert("SLKDJ");
     // alert(tutorsnap.length);
     // console.log("useeffect", tutorsnap);
+    // Object.keys(question.image).map((img) => {
+    //   console.log(img);
+    // });
   });
 
   //! classify questions as resolved or not and have automated search bar
@@ -19,14 +22,24 @@ export default function TutorQs({ tutorsnap }) {
       {tutorsnap.map((question, i) => (
         <div key={question.id}>
           <h1>Question {i + 1}</h1>
-          <div className="flex-1 h-52 w-52">
-            <Image
-              priority={true}
-              src={question.image}
-              height="10%"
-              width="10%"
-              layout="responsive"
-            ></Image>
+          <div className="flex-wrap h-156 w-52">
+            {question.image
+              .toString()
+              .split(",")
+              .map((img, i) => (
+                <>
+                  <Image
+                    key={img + i}
+                    priority={true}
+                    src={img}
+                    height="10%"
+                    width="10%"
+                    layout="responsive"
+                  ></Image>
+
+                  <div className="h-5 border-t-8 border-black  border-double ml-48 mr-48" />
+                </>
+              ))}
           </div>
           <h2>{question.title}</h2>
           <h3>By: {question.createdBy}</h3>
@@ -47,6 +60,7 @@ export async function getServerSideProps() {
       docsnapshot.docs.forEach((question) => {
         const qfull = question.data();
         qfull.id = question.id.toString();
+        console.log("image", question.data().image.toString());
         tutorsnap.push(qfull);
       });
     }
